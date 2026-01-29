@@ -1,0 +1,36 @@
+# Aggregate Boundary Enforcement Rule
+# Detects violations of DDD aggregate boundaries
+# Aggregate members can only be accessed through the aggregate root
+
+RULE "AGGREGATE-BOUNDARY-ENFORCEMENT" : IMetaArchitecture
+  ID: "ARCH-AGGREGATE-001"
+  DESCRIPTION: "Aggregate boundary violation - aggregate member accessed from outside its aggregate"
+  SEVERITY: Error
+  CATEGORY: "Architecture_Quality"
+  APPLIES_TO: ["cpp", "python", "java", "c"]
+
+  PLUGIN:
+    ID: "architecture-validator"
+    SCOPE: "tree"
+    CONFIG:
+      validator: "AggregateBoundary"
+      aggregate_roots: "[\"Session\",\"Graph\",\"Executor\",\"OpKernel\"]"
+      aggregate_members: "[\"*Internal\",\"*Impl\",\"*.internal.*\",\"*_internal*\"]"
+
+  EDUCATION:
+    DOCS_URL: "https://martinfowler.com/bliki/DDD_Aggregate.html"
+    WHY_IT_MATTERS: "This rule ensures that aggregate members are only accessed within their respective aggregates. When a member is accessed from outside its aggregate, it can cause unexpected behavior and conflicts with other parts of the system. This rule helps prevent errors and maintain consistency in the codebase, leading to better performance, scalability, and maintainability"
+    BUSINESS_IMPACT: "Violating this rule can result in significant financial and reputational losses for the company, as it can lead to data inconsistencies, loss of customer trust, and negative publicity. The cost of rectifying the issue can be high, and the risk of further violations can increase over time, leading to a decline in productivity and reputation for the organization"
+    QUICK_FIX: "Access aggregate members only through the aggregate root. Instead of directly instantiating or calling aggregate members (e.g., `new OrderLine()`), use methods on the aggregate root that manage the members internally (e.g., `order.AddOrderLine(...)`). This maintains transactional boundaries and encapsulation."
+
+  ARCHITECTURAL_CONTEXT:
+    PROJECT_TYPE: "ML_FRAMEWORK"
+    ARCHITECTURE_PATTERN: "Layered"
+    DESIGN_PRINCIPLES: ["Op_Encapsulation", "Internal_Boundaries", "Language_Independence"]
+
+  VIOLATIONS:
+    - "Aggregate boundary violation: {{SOURCE_NAMESPACE}} directly accesses {{TARGET_NAMESPACE}} (aggregate member)"
+    - "Aggregate member {{TARGET_NAMESPACE}} should only be accessed through aggregate root {{AGGREGATE_ROOT}}"
+    - "DDD violation: Direct access to aggregate member from outside aggregate boundary"
+
+END_RULE
