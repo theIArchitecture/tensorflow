@@ -1,157 +1,42 @@
 {
   "language": "cpp",
-  "displayName": "C++ (TensorFlow Configuration)",
-  "fileExtensions": [".cpp", ".cc", ".cxx", ".hpp", ".hh", ".hxx", ".h"],
-  "plainImportBehavior": "skip",
-
-  "layerDetection": {
+  "display_name": "C++",
+  "file_extensions": [".cpp", ".cc", ".cxx", ".hpp", ".hh", ".hxx", ".h"],
+  "layer_detection": {
     "layers": {
-      "Core": {
-        "pathPatterns": [
-          "core/kernels",
-          "core/common_runtime",
-          "core/framework",
-          "core/graph",
-          "core/ops",
-          "core/platform",
-          "core/lib",
-          "core/util",
-          "core/distributed_runtime",
-          "core/function",
-          "core/grappler"
-        ],
-        "namingPatterns": [
-          "^tensorflow::.*",
-          "Kernel$",
-          "OpKernel",
-          "Device",
-          "Allocator",
-          "Tensor"
-        ],
-        "namespacePatterns": [
-          "tensorflow",
-          "tensorflow::.*"
-        ],
-        "importPatterns": [
-          "tensorflow/core"
-        ]
-      },
-
-      "CppFramework": {
-        "pathPatterns": [
-          "cc/client",
-          "cc/framework",
-          "cc/ops",
-          "cc/gradients",
-          "cc/saved_model",
-          "cc/training"
-        ],
-        "namingPatterns": [
-          "ClientSession",
-          "Scope",
-          "Output",
-          "Operation"
-        ],
-        "namespacePatterns": [
-          "tensorflow::ops",
-          "tensorflow::cc"
-        ],
-        "importPatterns": [
-          "tensorflow/cc"
-        ]
-      },
-
-      "Utilities": {
-        "pathPatterns": [
-          "core/util",
-          "cc/tools"
-        ],
-        "namingPatterns": [
-          "Util$",
-          "Helper$",
-          "Utils$"
-        ],
-        "namespacePatterns": [
-          ".*::util",
-          ".*::utils"
-        ],
-        "importPatterns": [
-          "util",
-          "tools"
-        ]
-      }
+      "PythonAPI": { "path_patterns": ["tensorflow/python"] },
+      "CC_API":    { "path_patterns": ["tensorflow/cc"] },
+      "C_API":     { "path_patterns": ["tensorflow/c/"] },
+      "Lite":      { "path_patterns": ["tensorflow/lite"] },
+      "Compiler":  { "path_patterns": ["tensorflow/compiler"] },
+      "Core":      { "path_patterns": ["tensorflow/core"] }
     }
   },
-
-  "parsingPatterns": {
-    "namespace": "^\\s*namespace\\s+([\\w:]+)\\s*(?:\\{|$)",
-    "import": "^\\s*#include\\s+[\"<](?<module>[\\w/.]+)[\">]",
-    "typeDeclaration": "(?:template\\s*<[^>]+>\\s*)?(?:class|struct|enum(?:\\s+class)?|union)\\s+(\\w+)(?:\\s*:\\s*(?:public|protected|private)\\s+(\\w+))?",
-    "typeKeywords": ["class", "struct", "enum", "union"],
-    "methodDeclaration": "(?:virtual\\s+|static\\s+|inline\\s+|explicit\\s+|constexpr\\s+)*(?:[\\w:<>,\\s*&]+)\\s+(\\w+)\\s*\\(([^)]*)\\)(?:\\s*const)?(?:\\s*override)?(?:\\s*=\\s*(?:0|default|delete))?",
-    "instantiation": "(?:new\\s+|std::make_\\w+<|std::unique_ptr<|std::shared_ptr<)\\s*([\\w:]+)",
-    "commentSingleLine": "//(.*)$",
-    "commentMultiLine": "/\\*(.*?)\\*/",
-    "commentDocumentation": "///(.*)$"
+  "parsing_patterns": {
+    "scope_from_path": "tensorflow/([^/]+)/",
+    "namespace": "^\\s*namespace\\s+([\\w:]+)\\s*\\{",
+    "import": "^\\s*#include\\s*[<\"](?<module>[^>\"]+)[>\"]",
+    "type_declaration": "^\\s*(?:template\\s*<[^>]*>\\s*)?(?:class|struct|enum(?:\\s+class)?)\\s+(\\w+)(?:\\s*(?:[:{]|:\\s*(?:public|protected|private)))",
+    "type_keywords": ["class", "struct", "enum"],
+    "method_declaration": "^\\s*(?:virtual\\s+)?(?:static\\s+)?(?:inline\\s+)?([\\w:]+(?:<[^>]+>)?)\\s+([\\w:]+)\\s*\\(([^)]*)\\)",
+    "instantiation": "\\bnew\\s+([\\w:]+)(?:<[^>]*>)?\\s*\\(",
+    "comment_single_line": "//(.*)$",
+    "comment_multi_line": "/\\*(.*?)\\*/",
+    "comment_documentation": "///(.*)$"
   },
-
-  "fieldExtractionPatterns": [
-    {
-      "name": "field_declaration",
-      "description": "Matches C++ field/member variable declarations",
-      "pattern": "(?:public|private|protected)\\s*:\\s*(?:(?:static\\s+|mutable\\s+|const\\s+|constexpr\\s+)*)([\\w:<>,\\s*&]+)\\s+(\\w+)\\s*(?:;|=|\\{)",
-      "typeGroup": 1,
-      "nameGroup": 2,
-      "isProperty": false
-    },
-    {
-      "name": "member_variable",
-      "description": "Matches member variables without explicit access modifier",
-      "pattern": "^\\s+(?:static\\s+|mutable\\s+|const\\s+|constexpr\\s+)*([\\w:<>,\\s*&]+)\\s+(\\w+_)\\s*(?:;|=|\\{)",
-      "typeGroup": 1,
-      "nameGroup": 2,
-      "isProperty": false
-    },
-    {
-      "name": "using_declaration",
-      "description": "Matches using type aliases",
-      "pattern": "using\\s+(\\w+)\\s*=\\s*([\\w:<>,\\s*&]+)\\s*;",
-      "typeGroup": 2,
-      "nameGroup": 1,
-      "isProperty": false
-    },
-    {
-      "name": "typedef_declaration",
-      "description": "Matches typedef declarations",
-      "pattern": "typedef\\s+([\\w:<>,\\s*&]+)\\s+(\\w+)\\s*;",
-      "typeGroup": 1,
-      "nameGroup": 2,
-      "isProperty": false
-    }
-  ],
-
-  "transformationRules": {
-    "importTemplate": "#include \"{namespace}\"",
-    "importInsertLocation": "after_last_import",
-    "importRemovalPattern": "^\\s*#include\\s+[\"<]{namespace}[\">]\\s*$"
+  "formatting_rules": {
+    "indent_size": 2,
+    "increase_indent_triggers": ["{"],
+    "decrease_indent_triggers": ["}"],
+    "decrease_before_line": true
   },
-
-  "formattingRules": {
-    "indentSize": 2,
-    "increaseIndentTriggers": ["{"],
-    "decreaseIndentTriggers": ["}"],
-    "decreaseBeforeLine": true
-  },
-
-  "syntaxValidation": {
-    "balancedPairs": [
+  "syntax_validation": {
+    "balanced_pairs": [
       { "open": "(", "close": ")" },
       { "open": "[", "close": "]" },
       { "open": "{", "close": "}" },
       { "open": "<", "close": ">" }
-    ],
-    "invalidPatterns": [";;", "#include\\s+[^\"<]"]
+    ]
   },
-
-  "commentStyles": ["//", "/*", "///"]
+  "comment_styles": ["//", "/*", "///"]
 }

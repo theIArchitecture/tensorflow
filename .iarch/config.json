@@ -1,0 +1,27 @@
+{
+  "discovery-root": ".",
+  "bundled-defaults-path": "../dist",
+  "version": "1.0",
+  "default-layer": "Core",
+  "layer-hierarchy": {
+    "Core":      { "inherits-from": [] },
+    "Compiler":  { "inherits-from": ["Core"] },
+    "Lite":      { "inherits-from": ["Core"] },
+    "C_API":     { "inherits-from": ["Core"] },
+    "CC_API":    { "inherits-from": ["Core", "C_API"] },
+    "Java_API":  { "inherits-from": ["Core"] },
+    "PythonAPI": { "inherits-from": ["Core", "Compiler", "Lite", "C_API", "CC_API"] }
+  },
+  "engine-config": {
+    "parallel-threads": 9,
+    "max-file-size-bytes": 500000,
+    "files-per-batch": 50,
+    "progressive-output-threshold": 200,
+    "cache-root-path": "E:/cache/tensorflow",
+    "ignore-patterns": [
+      "bazel-bin", "bazel-out", "bazel-testlogs", "bazel-tensorflow",
+      "*_test.py", "*_test.cc", "*_test.cu", "*_test.cpp", "*_test*.c",
+      "test_*.py"
+    ]
+  }
+}

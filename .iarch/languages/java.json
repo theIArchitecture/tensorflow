@@ -1,0 +1,29 @@
+{
+  "language": "java",
+  "display_name": "Java",
+  "file_extensions": [".java"],
+  "layer_detection": {
+    "layers": {
+      "Lite":     { "path_patterns": ["tensorflow/lite/java"] },
+      "Java_API": { "path_patterns": ["tensorflow/java"] }
+    }
+  },
+  "parsing_patterns": {
+    "scope_from_path": "tensorflow/([^/]+)/",
+    "namespace": "^\\s*package\\s+([\\w\\.]+)\\s*;",
+    "import": "^\\s*import\\s+(?:static\\s+)?(?<module>[\\w\\.]+(?:\\*)?);",
+    "type_declaration": "^\\s*(?:public|protected|private)?\\s*(?:abstract\\s+|final\\s+)?(?:class|interface|enum|record)\\s+(\\w+)",
+    "type_keywords": ["class", "interface", "enum", "record"],
+    "method_declaration": "^\\s*(?:public|protected|private)?\\s*(?:static\\s+)?(?:final\\s+)?(?:[\\w<>\\[\\]]+)\\s+(\\w+)\\s*\\(",
+    "comment_single_line": "//(.*)$",
+    "comment_multi_line": "/\\*(.*?)\\*/",
+    "comment_documentation": "/\\*\\*(.*?)\\*/"
+  },
+  "formatting_rules": {
+    "indent_size": 4,
+    "increase_indent_triggers": ["{"],
+    "decrease_indent_triggers": ["}"],
+    "decrease_before_line": true
+  },
+  "comment_styles": ["//", "/*", "/**"]
+}

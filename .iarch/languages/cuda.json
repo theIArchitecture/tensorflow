@@ -1,0 +1,23 @@
+{
+  "language": "cuda",
+  "display_name": "CUDA",
+  "file_extensions": [".cu", ".cuh"],
+  "layer_detection": {
+    "layers": {
+      "Compiler": { "path_patterns": ["tensorflow/compiler"] },
+      "Lite":     { "path_patterns": ["tensorflow/lite"] },
+      "Core":     { "path_patterns": ["tensorflow/core"] }
+    }
+  },
+  "parsing_patterns": {
+    "scope_from_path": "tensorflow/([^/]+)/",
+    "namespace": "^\\s*namespace\\s+([\\w:]+)\\s*\\{",
+    "import": "^\\s*#include\\s*[<\"](?<module>[^>\"]+)[>\"]",
+    "type_declaration": "^\\s*(?:template\\s*<[^>]*>\\s*)?(?:class|struct|enum(?:\\s+class)?)\\s+(\\w+)(?:\\s*(?:[:{]|:\\s*(?:public|protected|private)))",
+    "type_keywords": ["class", "struct", "enum"],
+    "comment_single_line": "//(.*)$",
+    "comment_multi_line": "/\\*(.*?)\\*/",
+    "comment_documentation": "///(.*)$"
+  },
+  "comment_styles": ["//", "/*", "///"]
+}
